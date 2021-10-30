@@ -1,5 +1,3 @@
-import Peer from 'peerjs';
-import { io } from 'socket.io-client';
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -9,20 +7,8 @@ import Messages from '../Messages/Messages';
 import Input from '../Input/Input';
 import Stream from '../Stream/Stream';
 
-import iceServers from '../../config/ice-servers.json';
-import servers from '../../config/servers';
-
 import isEnter, { isSpace } from '../../helpers/isEnter';
-
-const host = servers.localhost;
-const socket = io(host);
-
-const peer = new Peer({
-  debug: true,
-  config: {
-    iceServers,
-  },
-});
+import setupChannels from './setupChannels';
 
 const getUserName = () => {
   let name = localStorage.getItem('username');
@@ -42,28 +28,32 @@ export default function Room({ location }) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    setRoom(location.pathname.slice(1));
-    setName(getUserName());
+  const [socket, setSocket] = useState('');
+  const [peer, setPeer] = useState('');
 
-    peer.on('open', (peerId) => {
-      socket.emit('join', { name, room, peerId }, (error) => {
+  useEffect(() => {
+    setupChannels().then((channels) => {
+      setSocket(channels.socket);
+      setPeer(channels.peer);
+
+      setRoom(location.pathname.slice(1));
+      setName(getUserName());
+
+      channels.socket.emit('join', { name, room, peerId: channels.peerId }, (error) => {
         if (error) alert(error);
       });
-    });
 
-    peer.on('error', (err) => {
-      console.log(err);
-    });
-  }, [room, name, location.pathname]);
+      channels.peer.on('error', (err) => {
+        console.log(err);
+      });
 
-  useEffect(() => {
-    socket.on('message', (m) => {
-      setMessages((msgs) => [...msgs, m]);
-    });
+      channels.socket.on('message', (m) => {
+        setMessages((msgs) => [...msgs, m]);
+      });
 
-    socket.on('roomData', ({ users: newUsers }) => {
-      setUsers(newUsers);
+      channels.socket.on('roomData', ({ users: newUsers }) => {
+        setUsers(newUsers);
+      });
     });
   }, []);
 
@@ -99,6 +89,7 @@ export default function Room({ location }) {
   return (
     <div className="room">
       <Stream socket={socket} peer={peer} users={users} currUser={name} />
+
       <div className="room__welcome-block">
         <h1 className="room__greeting">
           Welcome,

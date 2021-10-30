@@ -6,6 +6,7 @@
   "rules": {
     "no-alert": "off",
     "no-console": "off",
-    "jsx-a11y/media-has-caption": "off"
+    "jsx-a11y/media-has-caption": "off",
+    "no-trailing-spaces": "off"
   }
 }

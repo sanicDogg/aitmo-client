@@ -38,6 +38,7 @@ export default function Stream({
   }, [cameraStream, peer, currUser, users]);
 
   useEffect(() => {
+    if (!peer || !socket) return;
     peer.on('call', (call) => {
       call.answer();
       call.on('stream', (remoteStream) => {
