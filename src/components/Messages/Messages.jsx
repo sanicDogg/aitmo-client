@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import './Messages.css';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import Message from './Message/Message';
+import Loader from '../Loader/Loader';
 
 export default function Messages({ msgs, username }) {
   const messages = msgs;
@@ -38,9 +39,11 @@ export default function Messages({ msgs, username }) {
 
   return (
     <ScrollToBottom className="messages" initialScrollBehavior="smooth">
-      <div className="messages__container">
-        { proceedMessages().map((m) => m) }
-      </div>
+      {messages.length ? (
+        <div className="messages__container">
+          { proceedMessages().map((m) => m) }
+        </div>
+      ) : <Loader />}
     </ScrollToBottom>
   );
 }

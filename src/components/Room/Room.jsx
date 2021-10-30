@@ -9,6 +9,7 @@ import Stream from '../Stream/Stream';
 
 import isEnter, { isSpace } from '../../helpers/isEnter';
 import setupChannels from './setupChannels';
+import Loader from '../Loader/Loader';
 
 const getUserName = () => {
   let name = localStorage.getItem('username');
@@ -109,9 +110,13 @@ export default function Room({ location }) {
       </div>
       <div>
         <h1 className="room__connected-text">Connected users:</h1>
-        <ol className="room__connected-list">
-          {users ? users.map((user) => <li key={user.id}>{user.name}</li>) : null }
-        </ol>
+        {
+          users ? (
+            <ol className="room__connected-list">
+              {users.map((user) => <li key={user.id}>{user.name}</li>)}
+            </ol>
+          ) : <Loader />
+        }
       </div>
     </div>
   );
