@@ -2,5 +2,10 @@
   "extends": ["airbnb"],
   "env": {
     "browser": true
+  },
+  "rules": {
+    "no-alert": "off",
+    "no-console": "off",
+    "jsx-a11y/media-has-caption": "off"
   }
 }
