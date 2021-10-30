@@ -1,0 +1,17 @@
+.messages {
+    width: 340px;
+    height: 430px;
+}
+
+.messages__container {
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    margin: 0 10px 0 10px;
+}
+
+@media (orientation: portrait) {
+    .messages {
+        height: 90vmin;
+    }
+}

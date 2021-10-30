@@ -1,0 +1,11 @@
+.input {
+    display: flex;
+    justify-content: center;
+}
+
+.input__element {
+    margin-top: 10px;
+    padding: 10px;
+    width: 80%;
+    font-size: inherit;
+}

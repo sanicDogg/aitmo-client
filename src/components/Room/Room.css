@@ -1,0 +1,25 @@
+.room {
+    display: flex;
+    padding: 20px;
+    justify-content: center;
+    gap: 50px;
+}
+
+.room__greeting {
+    margin-top: 0;
+    text-align: center;
+}
+
+.room__connected-text {
+    margin-top: 0;
+}
+
+.room__connected-list {
+    font-size: 1.3rem;
+}
+
+@media (max-width: 400px) {
+    .room {
+        flex-direction: column;
+    }
+}
