@@ -7,10 +7,11 @@ import Messages from '../Messages/Messages';
 import Input from '../Input/Input';
 import Stream from '../Stream/Stream';
 
-import isEnter, { isSpace } from '../../helpers/isEnter';
+import initUser from '../../helpers/initUser';
 import setupChannels from './setupChannels';
 import Loader from '../Loader/Loader';
 import { ChannelsContext } from '../ChannelsContext';
+import isEnter, { isSpace } from '../../helpers/isEnter';
 
 const getUserName = () => {
   let name = localStorage.getItem('username');
@@ -33,39 +34,7 @@ export default function Room({ location }) {
   const [socket, setSocket] = useState('');
   const [peer, setPeer] = useState('');
 
-  useEffect(() => {
-    setupChannels().then((channels) => {
-      setSocket(channels.socket);
-      setPeer(channels.peer);
-
-      setRoom(location.pathname.slice(1));
-      setName(getUserName());
-
-      channels.socket.emit('join', { name, room, peerId: channels.peerId }, (error) => {
-        if (error) alert(error);
-      });
-
-      channels.peer.on('error', (err) => {
-        console.log(err);
-      });
-
-      channels.socket.on('message', (m) => {
-        setMessages((msgs) => [...msgs, m]);
-      });
-
-      channels.socket.on('roomData', ({ users: newUsers }) => {
-        setUsers(newUsers);
-      });
-    });
-  }, []);
-
-  const sendMessage = () => {
-    if (message) {
-      socket.emit('sendMessage', message, () => setMessage(''));
-    }
-  };
-
-  const changeName = (e) => {
+  function changeName(e) {
     if (!isEnter(e) && !isSpace(e)) return;
     const newName = prompt('If you change your name, your messages will be lost!\nChange name to...');
     if (!newName) return;
@@ -77,7 +46,10 @@ export default function Room({ location }) {
       alert('Username is taken. Try another username');
       return;
     }
-
+    if (!socket) {
+      localStorage.setItem('username', newName);
+      window.location.reload();
+    }
     socket.emit('changeName', newName, (errObj) => {
       if (errObj) {
         alert(errObj.error);
@@ -86,6 +58,40 @@ export default function Room({ location }) {
         window.location.reload();
       }
     });
+  }
+
+  const tryToJoin = (channels) => {
+    channels.socket.emit('roomData', room, (roomData) => {
+      const { users: usersInTheRoom } = roomData;
+      const existingUser = usersInTheRoom.find((user) => user.name === name);
+      if (existingUser) {
+        alert('User already exists. Try another username');
+        changeName();
+        tryToJoin(channels);
+      } else {
+        initUser.call({
+          name, room, setMessages, setUsers,
+        }, channels);
+      }
+    });
+  };
+
+  useEffect(() => {
+    setupChannels().then((channels) => {
+      setSocket(channels.socket);
+      setPeer(channels.peer);
+
+      setRoom(location.pathname.slice(1));
+      setName(getUserName());
+
+      tryToJoin(channels);
+    });
+  }, []);
+
+  const sendMessage = () => {
+    if (message) {
+      socket.emit('sendMessage', message, () => setMessage(''));
+    }
   };
 
   return (
