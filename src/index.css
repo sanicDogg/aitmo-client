@@ -25,3 +25,10 @@ code {
     overflow: hidden;
   }
 }
+
+@media (orientation: portrait) {
+  #root {
+    margin-top: 15px;
+    height: auto;
+  }
+}

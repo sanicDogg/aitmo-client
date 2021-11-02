@@ -1,13 +1,23 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { StreamContext } from './StreamContext';
 import isEnter, { isSpace } from '../../helpers/isEnter';
+import { ChannelsContext } from '../ChannelsContext';
+import Loader from '../Loader/Loader';
 
 export default function StreamInterface() {
-  const [
-    streamer, socket, cameraStream, setCameraStream,
+  const {
+    streamer, cameraStream, setCameraStream,
     currUser, setSoundMuted, videoRef, calls, isSoundMuted,
-  ] = useContext(StreamContext);
+  } = useContext(StreamContext);
+
+  const { socket } = useContext(ChannelsContext);
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    video.muted = isSoundMuted;
+  }, [isSoundMuted]);
 
   function startBtnClicked(e) {
     if (!isEnter(e) && !isSpace(e)) return;
@@ -18,15 +28,25 @@ export default function StreamInterface() {
     if (streamer) { alert('Stream started by other user'); return; }
     // Сигнал серверу о начале стрима
     socket.emit('streamRequest');
+    setLoading(true);
     window.navigator.mediaDevices.getUserMedia(
       {
         video: { width: 300 },
         audio: true,
       },
     )
-      .then((r) => setCameraStream(r))
+      .then((r) => {
+        setCameraStream(r);
+        setSoundMuted(true);
+        setLoading(false);
+      })
       .catch((err) => {
+        if (err instanceof DOMException) {
+          alert('You need to gain access to the camera and mic to start streaming');
+        }
         console.error('error:', err);
+        socket.emit('streamStop');
+        setLoading(false);
       });
   }
 
@@ -44,8 +64,6 @@ export default function StreamInterface() {
 
   function enableSoundClicked(e) {
     if (!isEnter(e) && !isSpace(e)) return;
-    const video = videoRef.current;
-    video.muted = !video.muted;
     setSoundMuted(!isSoundMuted);
   }
 
@@ -63,16 +81,21 @@ export default function StreamInterface() {
 
   const iAmStreamerJSX = () => (
     <div className="streaming__interface">
-      <h2>You are streaming right now</h2>
-      <span
-        className="streaming__stop"
-        onClick={closeBtnClicked}
-        onKeyDown={closeBtnClicked}
-        role="button"
-        tabIndex={0}
-      >
-        Close stream
-      </span>
+      { isLoading ? <Loader />
+        : (
+          <>
+            <h2>You are streaming right now</h2>
+            <span
+              className="streaming__stop"
+              onClick={closeBtnClicked}
+              onKeyDown={closeBtnClicked}
+              role="button"
+              tabIndex={0}
+            >
+              Close stream
+            </span>
+          </>
+        )}
     </div>
   );
 

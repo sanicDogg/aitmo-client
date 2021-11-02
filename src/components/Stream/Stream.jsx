@@ -1,26 +1,28 @@
 import './Stream.css';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
 import PropTypes from 'prop-types';
 import { StreamContext } from './StreamContext';
 import StreamInterface from './StreamInterface';
+import { ChannelsContext } from '../ChannelsContext';
 
-export default function Stream({
-  socket, users, peer, currUser,
-}) {
+export default function Stream({ users, currUser }) {
   const [cameraStream, setCameraStream] = useState('');
   const [streamer, setStreamer] = useState('');
   const [isSoundMuted, setSoundMuted] = useState(true);
 
   const videoRef = useRef(null);
-
+  const { socket, peer } = useContext(ChannelsContext);
   const calls = [];
+
+  function hasCameraStream() {
+    return !(!cameraStream || !cameraStream.active);
+  }
 
   // Когда cameraStream обновится, делаем звонки всем участникам
   useEffect(() => {
-    if (!cameraStream) {
-      return;
-    }
-
+    if (!hasCameraStream()) return;
     try {
       const video = videoRef.current;
       video.srcObject = cameraStream;
@@ -28,14 +30,17 @@ export default function Stream({
     } catch (e) {
       console.error(e);
     }
+  }, [cameraStream]);
 
+  useEffect(() => {
+    if (!hasCameraStream()) return;
     users.forEach((user) => {
       if (currUser !== user.name) {
         const { peerId } = user;
         calls.push(peer.call(peerId, cameraStream));
       }
     });
-  }, [cameraStream, peer, currUser, users]);
+  }, [cameraStream, currUser, users]);
 
   useEffect(() => {
     if (!peer || !socket) return;
@@ -67,9 +72,17 @@ export default function Stream({
       <h1 className="streaming__text">Streaming</h1>
       <video ref={videoRef} autoPlay="autoplay" muted="muted" />
       <StreamContext.Provider value={
-          [streamer, socket, cameraStream, setCameraStream,
-            currUser, setSoundMuted, videoRef, calls, isSoundMuted]
+        {
+          streamer,
+          cameraStream,
+          setCameraStream,
+          currUser,
+          setSoundMuted,
+          videoRef,
+          calls,
+          isSoundMuted,
         }
+      }
       >
         <StreamInterface />
       </StreamContext.Provider>
@@ -78,8 +91,6 @@ export default function Stream({
 }
 
 Stream.propTypes = {
-  socket: PropTypes.shape.isRequired,
-  users: PropTypes.arrayOf.isRequired,
-  peer: PropTypes.shape.isRequired,
+  users: PropTypes.arrayOf(PropTypes.shape).isRequired,
   currUser: PropTypes.string.isRequired,
 };

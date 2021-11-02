@@ -10,7 +10,6 @@ export default function CreateRoom() {
       <Link to={`/${uuid()}`} style={{ textDecoration: 'none' }}>
         <div className="create-room__button">Create Room</div>
       </Link>
-      <p>Once you clicked the button, you need to reload page</p>
     </div>
   );
 }

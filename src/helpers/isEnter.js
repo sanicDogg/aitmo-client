@@ -1,13 +1,13 @@
 export default function isEnter(event) {
-  if (event.code) {
-    if (event.code !== 'Enter') return false;
+  if (event.keyCode) {
+    if (event.keyCode !== 13) return false;
   }
   return true;
 }
 
 export const isSpace = (event) => {
-  if (event.code) {
-    if (event.code !== 'Space') return false;
+  if (event.keyCode) {
+    if (event.keyCode !== 32) return false;
   }
   return true;
 };
