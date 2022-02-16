@@ -4,8 +4,8 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { StreamContext } from './StreamContext';
-import StreamInterface from './StreamInterface';
 import { ChannelsContext } from '../ChannelsContext';
+import StreamInterface from './StreamInterface';
 
 export default function Stream({ users, currUser }) {
   const [cameraStream, setCameraStream] = useState('');

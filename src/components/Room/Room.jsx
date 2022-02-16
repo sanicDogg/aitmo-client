@@ -111,6 +111,7 @@ export default function Room({ location }) {
             >
               {name}
             </span>
+
           </h1>
           <Messages msgs={messages} username={name} />
           <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />

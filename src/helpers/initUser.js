@@ -1,21 +1,21 @@
-export default function initUser(channels) {
+export default function initUser({ socket, peer, peerId }) {
   const {
     name, room, setMessages, setUsers,
   } = this;
 
-  channels.socket.emit('join', { name, room, peerId: channels.peerId }, (error) => {
+  socket.emit('join', { name, room, peerId }, (error) => {
     if (error) alert(error);
   });
 
-  channels.peer.on('error', (err) => {
+  peer.on('error', (err) => {
     console.log(err);
   });
 
-  channels.socket.on('message', (m) => {
+  socket.on('message', (m) => {
     setMessages((msgs) => [...msgs, m]);
   });
 
-  channels.socket.on('roomData', ({ users: newUsers }) => {
+  socket.on('roomData', ({ users: newUsers }) => {
     setUsers(newUsers);
   });
 }

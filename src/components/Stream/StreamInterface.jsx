@@ -19,27 +19,66 @@ export default function StreamInterface() {
     video.muted = isSoundMuted;
   }, [isSoundMuted]);
 
-  function startBtnClicked(e) {
-    if (!isEnter(e) && !isSpace(e)) return;
+  function checkNavigator() {
     if (!window.navigator.mediaDevices) {
       alert('Camera is not available');
-      return;
+      return false;
     }
-    if (streamer) { alert('Stream started by other user'); return; }
-    // Сигнал серверу о начале стрима
-    socket.emit('streamRequest');
-    setLoading(true);
-    window.navigator.mediaDevices.getUserMedia(
+    return true;
+  }
+
+  function checkStreamer() {
+    if (streamer) { alert('Stream started by other user'); return false; }
+    return true;
+  }
+
+  function getUserMedia() {
+    return window.navigator.mediaDevices.getUserMedia(
       {
         video: { width: 300 },
         audio: true,
       },
-    )
-      .then((r) => {
-        setCameraStream(r);
-        setSoundMuted(true);
-        setLoading(false);
-      })
+    );
+  }
+
+  function getDisplayMedia() {
+    return window.navigator.mediaDevices.getDisplayMedia(
+      {
+        cursor: true,
+        video: { width: 900 },
+        audio: true,
+      },
+    );
+  }
+
+  function streamBtnClicked(e) {
+    if (!isEnter(e) && !isSpace(e)) return;
+    if (!checkNavigator()) return;
+    if (!checkStreamer()) return;
+
+    // Сигнал серверу о начале стрима
+    socket.emit('streamRequest');
+    setLoading(true);
+
+    let media;
+
+    switch (e.target.dataset.action) {
+      case 'shareScreen':
+        media = getDisplayMedia();
+        break;
+      case 'streamVideo':
+        media = getUserMedia();
+        break;
+      default:
+        alert('Unknown button pressed!');
+        return;
+    }
+
+    media.then((r) => {
+      setCameraStream(r);
+      setSoundMuted(true);
+      setLoading(false);
+    })
       .catch((err) => {
         if (err instanceof DOMException) {
           alert('You need to gain access to the camera and mic to start streaming');
@@ -68,14 +107,27 @@ export default function StreamInterface() {
   }
 
   const noStreamerJSX = () => (
-    <div
-      className="streaming__start"
-      onClick={startBtnClicked}
-      onKeyDown={startBtnClicked}
-      role="button"
-      tabIndex={0}
-    >
-      Start stream
+    <div>
+      <div
+        className="streaming__start"
+        data-action="streamVideo"
+        onClick={streamBtnClicked}
+        onKeyDown={streamBtnClicked}
+        role="button"
+        tabIndex={0}
+      >
+        Start stream
+      </div>
+      <div
+        className="streaming__share-screen"
+        data-action="shareScreen"
+        onClick={streamBtnClicked}
+        onKeyDown={streamBtnClicked}
+        role="button"
+        tabIndex={0}
+      >
+        Share screen
+      </div>
     </div>
   );
 
