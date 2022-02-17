@@ -30,4 +30,12 @@
     .room {
         flex-direction: column;
     }
+
+    .code-editor {
+        display: none;
+    }
+
+    .room__welcome-block {
+        margin: 20px;
+    }
 }

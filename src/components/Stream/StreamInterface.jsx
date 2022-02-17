@@ -35,7 +35,7 @@ export default function StreamInterface() {
   function getUserMedia() {
     return window.navigator.mediaDevices.getUserMedia(
       {
-        video: { width: 300 },
+        video: { width: 1920 },
         audio: true,
       },
     );
@@ -45,7 +45,7 @@ export default function StreamInterface() {
     return window.navigator.mediaDevices.getDisplayMedia(
       {
         cursor: true,
-        video: { width: 900 },
+        video: { width: 3000 },
         audio: true,
       },
     );

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import './Room.css';
 
-import AceEditor from 'react-ace';
 import Messages from '../Messages/Messages';
 import Input from '../Input/Input';
 import Stream from '../Stream/Stream';
@@ -13,6 +12,7 @@ import setupChannels from './setupChannels';
 import Loader from '../Loader/Loader';
 import { ChannelsContext } from '../ChannelsContext';
 import isEnter, { isSpace } from '../../helpers/isEnter';
+import CodeEditor from '../CodeEditor/CodeEditor';
 
 const getUserName = () => {
   let name = localStorage.getItem('username');
@@ -34,8 +34,6 @@ export default function Room({ location }) {
 
   const [socket, setSocket] = useState('');
   const [peer, setPeer] = useState('');
-
-  const [code, setCode] = useState('');
 
   function changeName(e) {
     if (!isEnter(e) && !isSpace(e)) return;
@@ -68,10 +66,9 @@ export default function Room({ location }) {
       const { users: usersInTheRoom } = roomData;
       const existingUser = usersInTheRoom.find((user) => user.name === name);
       if (existingUser) {
-        // Убрать комменты перед коммитом
-        // alert('User already exists. Try another username');
-        // changeName();
-        // tryToJoin(channels);
+        alert('User already exists. Try another username');
+        changeName();
+        tryToJoin(channels);
       } else {
         initUser.call({
           name, room, setMessages, setUsers,
@@ -98,41 +95,18 @@ export default function Room({ location }) {
     }
   };
 
-  const codeChange = (v) => {
-    if (v === 'start') {
-      setCode('It works');
-    } else {
-      setCode(v);
-    }
-  };
-
   return (
     <ChannelsContext.Provider value={{ socket, peer }}>
       <div className="room">
         <Stream users={users} currUser={name} />
 
-        <AceEditor
-          placeholder="Placeholder Text"
-          mode="javascript"
-          theme="github"
-          name="blah2"
-          fontSize={14}
-          showPrintMargin
-          showGutter
-          onChange={codeChange}
-          highlightActiveLine
-          value={code}
-          setOptions={{
-            enableBasicAutocompletion: false,
-            enableLiveAutocompletion: false,
-            enableSnippets: false,
-            showLineNumbers: true,
-            tabSize: 2,
-          }}
-        />
+        <div className="code-editor">
+          <h2 style={{ marginTop: 0 }}>Collaborative editor</h2>
+          <CodeEditor />
+        </div>
 
         <div className="room__welcome-block">
-          <h1 className="room__greeting">
+          <h2 className="room__greeting">
             Welcome,
             {' '}
             <span
@@ -145,7 +119,7 @@ export default function Room({ location }) {
               {name}
             </span>
 
-          </h1>
+          </h2>
 
           <div>
             {

@@ -13,5 +13,6 @@
 @media (orientation: portrait) {
     .messages {
         height: 90vmin;
+        margin: auto;
     }
 }

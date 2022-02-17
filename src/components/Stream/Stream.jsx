@@ -50,6 +50,7 @@ export default function Stream({ users, currUser }) {
         try {
           const video = videoRef.current;
           video.srcObject = remoteStream;
+          video.setAttribute('controls', '');
         } catch (e) {
           console.error(e);
         }
@@ -64,13 +65,14 @@ export default function Stream({ users, currUser }) {
       setStreamer('');
       const video = videoRef.current;
       video.srcObject = null;
+      video.removeAttribute('controls');
     });
   }, [peer, socket]);
 
   return (
     <div className="streaming">
-      <h1 className="streaming__text">Streaming</h1>
-      <video ref={videoRef} autoPlay="autoplay" muted="muted" />
+      <h2 className="streaming__text">Streaming</h2>
+      <video ref={videoRef} autoPlay="autoplay" muted="muted" width="300" />
       <StreamContext.Provider value={
         {
           streamer,
