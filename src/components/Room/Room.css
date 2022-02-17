@@ -15,6 +15,15 @@
 
 .room__connected-list {
     font-size: 1.3rem;
+    list-style-image: url("online-icon.svg");
+    display: flex;
+    column-gap: 50px;
+    flex-wrap: wrap;
+    width: 340px;
+}
+
+.room__connected-li {
+
 }
 
 @media (max-width: 600px) {

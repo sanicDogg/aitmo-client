@@ -81,7 +81,7 @@ export default function StreamInterface() {
     })
       .catch((err) => {
         if (err instanceof DOMException) {
-          alert('You need to gain access to the camera and mic to start streaming');
+          alert('You need to gain access to the required things to start streaming');
         }
         console.error('error:', err);
         socket.emit('streamStop');
