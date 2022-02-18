@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import './Room.css';
@@ -95,8 +95,10 @@ export default function Room({ location }) {
     }
   };
 
+  const channels = useMemo(() => ({ socket, peer }), []);
+
   return (
-    <ChannelsContext.Provider value={{ socket, peer }}>
+    <ChannelsContext.Provider value={channels}>
       <div className="room">
         <Stream users={users} currUser={name} />
 
