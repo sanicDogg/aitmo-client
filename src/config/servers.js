@@ -3,5 +3,5 @@
  */
 
 export default {
-  localhost: 'http://localhost:5000',
+  localhost: 'https://server0-chat.herokuapp.com/',
 };
