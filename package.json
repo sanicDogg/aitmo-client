@@ -19,6 +19,12 @@
     "socket.io-client": "^4.2.0",
     "uuid": "^8.3.2"
   },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -36,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0"
   }
 }
