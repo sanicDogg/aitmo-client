@@ -151,17 +151,19 @@ export default function StreamInterface() {
     </div>
   );
 
-  const SoundButton = ({ text }) => (
-    <span
-      className="streaming__enable-sound"
-      onClick={enableSoundClicked}
-      onKeyDown={enableSoundClicked}
-      role="button"
-      tabIndex={0}
-    >
-      {text}
-    </span>
-  );
+  function SoundButton({ text }) {
+    return (
+      <span
+        className="streaming__enable-sound"
+        onClick={enableSoundClicked}
+        onKeyDown={enableSoundClicked}
+        role="button"
+        tabIndex={0}
+      >
+        {text}
+      </span>
+    );
+  }
   SoundButton.propTypes = {
     text: PropTypes.string.isRequired,
   };
