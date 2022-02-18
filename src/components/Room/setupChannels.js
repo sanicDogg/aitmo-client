@@ -13,6 +13,9 @@ const socketSetup = () => new Promise((resolve) => {
       resolve(socket);
     }
   });
+  socket.on('disconnect', () => {
+    alert('Disconnected');
+  });
 });
 
 const peerSetup = () => new Promise((resolve) => {
