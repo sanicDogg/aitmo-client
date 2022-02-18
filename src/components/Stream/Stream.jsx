@@ -1,6 +1,6 @@
 import './Stream.css';
 import React, {
-  useContext, useEffect, useMemo, useRef, useState,
+  useContext, useEffect, useRef, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { StreamContext } from './StreamContext';
@@ -69,7 +69,7 @@ export default function Stream({ users, currUser }) {
     });
   }, [peer, socket]);
 
-  const contextObj = useMemo(() => ({
+  const contextObj = {
     streamer,
     cameraStream,
     setCameraStream,
@@ -78,7 +78,7 @@ export default function Stream({ users, currUser }) {
     videoRef,
     calls,
     isSoundMuted,
-  }), []);
+  };
 
   return (
     <div className="streaming">

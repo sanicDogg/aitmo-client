@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import './Room.css';
@@ -95,7 +95,7 @@ export default function Room({ location }) {
     }
   };
 
-  const channels = useMemo(() => ({ socket, peer }), []);
+  const channels = { socket, peer };
 
   return (
     <ChannelsContext.Provider value={channels}>
