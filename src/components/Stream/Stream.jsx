@@ -83,7 +83,7 @@ export default function Stream({ users, currUser }) {
   return (
     <div className="streaming">
       <h2 className="streaming__text">Streaming</h2>
-      <video ref={videoRef} autoPlay="autoplay" muted="muted" width="300" style={{ margin: '0 auto;' }} />
+      <video ref={videoRef} autoPlay="autoplay" muted="muted" width="300" style={{ margin: '0 auto' }} />
       <StreamContext.Provider value={contextObj}>
         <StreamInterface />
       </StreamContext.Provider>
