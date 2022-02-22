@@ -123,15 +123,13 @@ export default function Room({ location }) {
 
           </h2>
 
-          <div>
-            {
-              users ? (
-                <ol className="room__connected-list">
-                  {users.map((user) => <li key={user.id} className="room_connected-li">{user.name}</li>)}
-                </ol>
-              ) : <Loader />
-            }
-          </div>
+          {
+            users ? (
+              <ol className="room__connected-list">
+                {users.map((user) => <li key={user.id} className="room__connected-li">{user.name}</li>)}
+              </ol>
+            ) : <Loader />
+          }
 
           <Messages msgs={messages} username={name} />
           <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />

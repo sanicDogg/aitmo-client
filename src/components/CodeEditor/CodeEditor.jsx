@@ -28,6 +28,7 @@ export default function CodeEditor() {
       theme="xcode"
       name="blah2"
       fontSize={14}
+      className="ace__container"
       showPrintMargin
       showGutter
       onChange={codeChange}

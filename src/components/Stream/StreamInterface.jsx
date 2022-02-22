@@ -55,6 +55,10 @@ export default function StreamInterface() {
     if (!isEnter(e) && !isSpace(e)) return;
     if (!checkNavigator()) return;
     if (!checkStreamer()) return;
+    if (!socket) {
+      alert('Disconnected');
+      return;
+    }
 
     // Сигнал серверу о начале стрима
     socket.emit('streamRequest');

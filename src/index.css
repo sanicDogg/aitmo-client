@@ -19,16 +19,15 @@ code {
   justify-content: center;
 }
 
-@media (min-width: 1900px) {
-  html {
-    transform: scale(1.5);
-    overflow: hidden;
-  }
-}
-
 @media (orientation: portrait) {
   #root {
     margin-top: 15px;
+    height: auto;
+  }
+}
+
+@media (max-width: 800px) {
+  #root {
     height: auto;
   }
 }
