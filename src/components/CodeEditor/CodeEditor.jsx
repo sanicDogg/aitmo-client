@@ -3,17 +3,23 @@ import AceEditor from 'react-ace';
 
 import 'brace/mode/javascript';
 import 'brace/theme/xcode';
+import PropTypes from 'prop-types';
 import { ChannelsContext } from '../ChannelsContext';
 
-export default function CodeEditor() {
+export default function CodeEditor({ currUser }) {
   const [code, setCode] = useState('');
   const { socket } = useContext(ChannelsContext);
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('codeChange', (commonCode) => {
-      setCode(commonCode);
+    socket.on('codeChange', ({ commonCode, author }) => {
+      if (author !== currUser) {
+        setCode(commonCode);
+        console.log('not match');
+      } else {
+        console.log('match');
+      }
     });
   }, [socket]);
 
@@ -41,3 +47,7 @@ export default function CodeEditor() {
     />
   );
 }
+
+CodeEditor.propTypes = {
+  currUser: PropTypes.string.isRequired,
+};

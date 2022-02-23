@@ -104,7 +104,7 @@ export default function Room({ location }) {
 
         <div className="code-editor">
           <h2 style={{ marginTop: 0 }}>Collaborative editor</h2>
-          <CodeEditor />
+          <CodeEditor currUser={name} />
         </div>
 
         <div className="room__welcome-block">
