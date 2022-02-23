@@ -27,14 +27,6 @@ export default function StreamInterface() {
       alert('Streaming is not available');
       return false;
     }
-    if (!window.navigator.mediaDevices.getUserMedia) {
-      alert('Camera is not available');
-      return false;
-    }
-    if (!window.navigator.mediaDevices.getDisplayMedia) {
-      alert('Screencast is not available');
-      return false;
-    }
     return true;
   }
 
@@ -57,6 +49,10 @@ export default function StreamInterface() {
   }
 
   function getUserMedia(webcamDevId, micDevId) {
+    if (!window.navigator.mediaDevices.getUserMedia) {
+      alert('Camera is not available');
+      return false;
+    }
     return window.navigator.mediaDevices.getUserMedia(
       {
         video: { deviceId: webcamDevId ? { exact: webcamDevId } : undefined, width: 1920 },
@@ -66,6 +62,10 @@ export default function StreamInterface() {
   }
 
   function getDisplayMedia() {
+    if (!window.navigator.mediaDevices.getDisplayMedia) {
+      alert('Screencast is not available');
+      return false;
+    }
     return window.navigator.mediaDevices.getDisplayMedia(
       {
         cursor: true,

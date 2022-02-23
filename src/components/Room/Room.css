@@ -18,7 +18,7 @@
     list-style-image: url("online-icon.svg");
     list-style-position: inside;
     display: flex;
-    column-gap: 10px;
+    gap: 5px;
     flex-wrap: wrap;
     width: 340px;
     padding-left: 12px;
