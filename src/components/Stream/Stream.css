@@ -55,6 +55,18 @@
     cursor: pointer;
 }
 
+.streaming__sources {
+    display: flex;
+    text-align: center;
+    width: 300px;
+}
+
+.streaming__sources select {
+    width: 130px;
+    height: 30px;
+    margin: 10px;
+}
+
 @media (max-width: 800px) {
     .streaming {
         align-self: center;

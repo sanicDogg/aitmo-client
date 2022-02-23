@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { exact } from 'prop-types';
 import { StreamContext } from './StreamContext';
 import isEnter, { isSpace } from '../../helpers/isEnter';
 import { ChannelsContext } from '../ChannelsContext';
@@ -13,6 +13,9 @@ export default function StreamInterface() {
 
   const { socket } = useContext(ChannelsContext);
   const [isLoading, setLoading] = useState(false);
+  const [devices, setDevices] = useState(undefined);
+  const [currMic, setCurrMic] = useState('');
+  const [currWebcam, setCurrWebcam] = useState('');
 
   useEffect(() => {
     const video = videoRef.current;
@@ -32,11 +35,26 @@ export default function StreamInterface() {
     return true;
   }
 
-  function getUserMedia() {
+  function loadDevices() {
+    navigator.mediaDevices.enumerateDevices().then((devs) => {
+      const mics = devs.filter((deviceInfo) => deviceInfo.kind === 'audioinput');
+      const webcams = devs.filter((deviceInfo) => deviceInfo.kind === 'videoinput');
+      console.log('Devices loaded');
+      console.log(mics);
+      console.log(webcams);
+      setDevices({ mics, webcams });
+      setCurrWebcam(webcams[0].deviceId);
+      setCurrMic(mics[0].deviceId);
+    });
+  }
+
+  function getUserMedia(webcamDevId, micDevId) {
+    // setCurrWebcam(webcamDevId || undefined);
+    // setCurrMic(micDevId || undefined);
     return window.navigator.mediaDevices.getUserMedia(
       {
-        video: { width: 1920 },
-        audio: true,
+        video: { deviceId: webcamDevId ? { exact: webcamDevId } : undefined, width: 1920 },
+        audio: { deviceId: micDevId ? { exact: micDevId } : undefined },
       },
     );
   }
@@ -51,34 +69,8 @@ export default function StreamInterface() {
     );
   }
 
-  function streamBtnClicked(e) {
-    if (!isEnter(e) && !isSpace(e)) return;
-    if (!checkNavigator()) return;
-    if (!checkStreamer()) return;
-    if (!socket) {
-      alert('Disconnected');
-      return;
-    }
-
-    // Сигнал серверу о начале стрима
-    socket.emit('streamRequest');
-    setLoading(true);
-
-    let media;
-
-    switch (e.target.dataset.action) {
-      case 'shareScreen':
-        media = getDisplayMedia();
-        break;
-      case 'streamVideo':
-        media = getUserMedia();
-        break;
-      default:
-        alert('Unknown button pressed!');
-        return;
-    }
-
-    media.then((r) => {
+  function processMedia(media) {
+    return media.then((r) => {
       setCameraStream(r);
       setSoundMuted(true);
       setLoading(false);
@@ -93,14 +85,52 @@ export default function StreamInterface() {
       });
   }
 
-  function closeBtnClicked(e) {
-    if (!isEnter(e) && !isSpace(e)) return;
+  function stopAllTracks() {
     if (cameraStream) {
       cameraStream.getTracks().forEach((track) => {
         track.stop();
       });
     }
+  }
 
+  useEffect(() => {
+    if (!currWebcam || !currMic) return;
+    stopAllTracks();
+    const media = getUserMedia(currWebcam, currMic);
+    processMedia(media);
+  }, [currWebcam, currMic]);
+
+  function streamBtnClicked(e) {
+    if (!isEnter(e) && !isSpace(e)) return;
+    if (!checkNavigator()) return;
+    if (!checkStreamer()) return;
+    if (!socket || socket.disconnected === true) {
+      alert('Disconnected');
+      return;
+    }
+
+    // Сигнал серверу о начале стрима
+    socket.emit('streamRequest');
+    setLoading(true);
+
+    switch (e.target.dataset.action) {
+      case 'shareScreen':
+        processMedia(getDisplayMedia());
+        break;
+      case 'streamVideo':
+        getUserMedia().then(() => loadDevices());
+        break;
+      default:
+        alert('Unknown button pressed!');
+    }
+  }
+
+  function closeBtnClicked(e) {
+    if (!isEnter(e) && !isSpace(e)) return;
+    stopAllTracks();
+    setDevices(null);
+    setCurrWebcam('');
+    setCurrMic('');
     calls.forEach((call) => call.close());
     socket.emit('streamStop');
   }
@@ -135,11 +165,65 @@ export default function StreamInterface() {
     </div>
   );
 
+  function changeSource(e) {
+    switch (e.target.dataset.kind) {
+      case 'webcamSelect':
+        setCurrWebcam(e.target.value);
+        break;
+      case 'micSelect':
+        setCurrMic(e.target.value);
+        break;
+      default:
+        alert('Unknown source');
+        break;
+    }
+  }
+
+  function renderDevices() {
+    return (
+      <div className="streaming__sources">
+        <label htmlFor="audioSources">
+          Microphone
+          <select onChange={changeSource} data-kind="micSelect" value={currMic}>
+            { devices.mics.map(
+              (microphone) => (
+                <option
+                  key={microphone.deviceId}
+                  value={microphone.deviceId}
+                >
+                  {microphone.label}
+                </option>
+              ),
+            ) }
+          </select>
+        </label>
+        <label htmlFor="videoSources">
+          Webcam
+          <select onChange={changeSource} data-kind="webcamSelect" value={currWebcam}>
+            {
+              devices.webcams.map(
+                (webcam) => (
+                  <option
+                    key={webcam.deviceId}
+                    value={webcam.deviceId}
+                  >
+                    {webcam.label}
+                  </option>
+                ),
+              )
+            }
+          </select>
+        </label>
+      </div>
+    );
+  }
+
   const iAmStreamerJSX = () => (
     <div className="streaming__interface">
       { isLoading ? <Loader />
         : (
           <>
+            { devices ? renderDevices() : null }
             <h2>You are streaming right now</h2>
             <span
               className="streaming__stop"
