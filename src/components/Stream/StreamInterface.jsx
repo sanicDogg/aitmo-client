@@ -76,6 +76,7 @@ export default function StreamInterface() {
   }
 
   function processMedia(media) {
+    if (!media) return undefined;
     return media.then((r) => {
       setCameraStream(r);
       setSoundMuted(true);
