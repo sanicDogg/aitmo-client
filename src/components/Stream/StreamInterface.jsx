@@ -30,6 +30,22 @@ export default function StreamInterface() {
     return true;
   }
 
+  function checkUserMedia() {
+    if (!window.navigator.mediaDevices.getUserMedia) {
+      alert('Camera is not available');
+      return false;
+    }
+    return true;
+  }
+
+  function checkDisplayMedia() {
+    if (!window.navigator.mediaDevices.getDisplayMedia) {
+      alert('Screencast is not available');
+      return false;
+    }
+    return true;
+  }
+
   function checkStreamer() {
     if (streamer) { alert('Stream started by other user'); return false; }
     return true;
@@ -49,10 +65,6 @@ export default function StreamInterface() {
   }
 
   function getUserMedia(webcamDevId, micDevId) {
-    if (!window.navigator.mediaDevices.getUserMedia) {
-      alert('Camera is not available');
-      return false;
-    }
     return window.navigator.mediaDevices.getUserMedia(
       {
         video: { deviceId: webcamDevId ? { exact: webcamDevId } : undefined, width: 1920 },
@@ -62,10 +74,6 @@ export default function StreamInterface() {
   }
 
   function getDisplayMedia() {
-    if (!window.navigator.mediaDevices.getDisplayMedia) {
-      alert('Screencast is not available');
-      return false;
-    }
     return window.navigator.mediaDevices.getDisplayMedia(
       {
         cursor: true,
@@ -110,6 +118,12 @@ export default function StreamInterface() {
   function streamBtnClicked(e) {
     if (!isEnter(e) && !isSpace(e)) return;
     if (!checkNavigator()) return;
+    if (e.target.dataset.action === 'shareScreen') {
+      if (!checkDisplayMedia()) return;
+    }
+    if (e.target.dataset.action === 'streamVideo') {
+      if (!checkUserMedia()) return;
+    }
     if (!checkStreamer()) return;
     if (!socket || socket.disconnected === true) {
       alert('Disconnected');
