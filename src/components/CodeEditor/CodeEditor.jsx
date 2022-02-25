@@ -16,9 +16,6 @@ export default function CodeEditor({ currUser }) {
     socket.on('codeChange', ({ commonCode, author }) => {
       if (author !== currUser) {
         setCode(commonCode);
-        console.log('not match');
-      } else {
-        console.log('match');
       }
     });
   }, [socket]);
