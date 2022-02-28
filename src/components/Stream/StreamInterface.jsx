@@ -51,17 +51,33 @@ export default function StreamInterface() {
     return true;
   }
 
+  function stopAllTracks() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+  }
+
   function loadDevices() {
-    navigator.mediaDevices.enumerateDevices().then((devs) => {
-      const mics = devs.filter((deviceInfo) => deviceInfo.kind === 'audioinput');
-      const webcams = devs.filter((deviceInfo) => deviceInfo.kind === 'videoinput');
-      console.log('Devices loaded');
-      console.log(mics);
-      console.log(webcams);
-      setDevices({ mics, webcams });
-      setCurrWebcam(webcams[0].deviceId);
-      setCurrMic(mics[0].deviceId);
-    });
+    function enumDevs() {
+      navigator.mediaDevices.enumerateDevices().then((devs) => {
+        const mics = devs.filter((deviceInfo) => deviceInfo.kind === 'audioinput');
+        const webcams = devs.filter((deviceInfo) => deviceInfo.kind === 'videoinput');
+        console.log('Devices loaded');
+        console.log(mics);
+        console.log(webcams);
+        setDevices({ mics, webcams });
+        setCurrWebcam(webcams[0].deviceId);
+        setCurrMic(mics[0].deviceId);
+      });
+    }
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(
+      (stream) => {
+        stream.getTracks().forEach((t) => t.stop());
+        enumDevs();
+      },
+    );
   }
 
   function getUserMedia(webcamDevId, micDevId) {
@@ -100,19 +116,10 @@ export default function StreamInterface() {
       });
   }
 
-  function stopAllTracks() {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach((track) => {
-        track.stop();
-      });
-    }
-  }
-
   useEffect(() => {
     if (!currWebcam || !currMic) return;
     stopAllTracks();
-    const media = getUserMedia(currWebcam, currMic);
-    processMedia(media);
+    processMedia(getUserMedia(currWebcam, currMic));
   }, [currWebcam, currMic]);
 
   function streamBtnClicked(e) {
@@ -139,7 +146,7 @@ export default function StreamInterface() {
         processMedia(getDisplayMedia());
         break;
       case 'streamVideo':
-        getUserMedia().then(() => loadDevices());
+        loadDevices();
         break;
       default:
         alert('Unknown button pressed!');
@@ -150,8 +157,9 @@ export default function StreamInterface() {
     if (!isEnter(e) && !isSpace(e)) return;
     stopAllTracks();
     setDevices(null);
-    setCurrWebcam('');
-    setCurrMic('');
+    setCurrWebcam(null);
+    setCurrMic(null);
+    setCameraStream(null);
     calls.forEach((call) => call.close());
     socket.emit('streamStop');
   }

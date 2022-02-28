@@ -42,6 +42,10 @@ export default function Stream({ users, currUser }) {
     });
   }, [cameraStream, currUser, users]);
 
+  /*
+  * Обработка сообщений peer и socket
+  */
+
   useEffect(() => {
     if (!peer || !socket) return;
     peer.on('call', (call) => {
