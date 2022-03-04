@@ -1,11 +1,12 @@
 import Peer from 'peerjs';
 import { io } from 'socket.io-client';
-import servers from '../../config/servers';
+// import servers from '../../config/servers';
 import iceServers from '../../config/ice-servers.json';
 
 const socketSetup = () => new Promise((resolve) => {
-  const host = servers.localhost;
-  const socket = io(host);
+  // const host = servers.localhost;
+  // Передать host аргументом io(), если сервер лежит на другом порту или хосте
+  const socket = io();
   socket.on('connected', ({ id }) => {
     if (socket.id === id) {
       console.log('SOCKET CONNECTED!');
@@ -20,7 +21,8 @@ const socketSetup = () => new Promise((resolve) => {
 
 const peerSetup = () => new Promise((resolve) => {
   const peer = new Peer({
-    debug: true,
+    debug: 2,
+    secure: true,
     config: {
       iceServers,
     },

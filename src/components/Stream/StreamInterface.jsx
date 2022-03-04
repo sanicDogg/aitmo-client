@@ -83,7 +83,7 @@ export default function StreamInterface() {
   function getUserMedia(webcamDevId, micDevId) {
     return window.navigator.mediaDevices.getUserMedia(
       {
-        video: { deviceId: webcamDevId ? { exact: webcamDevId } : undefined, width: 1920 },
+        video: { deviceId: webcamDevId ? { exact: webcamDevId } : undefined, width: 1980 },
         audio: { deviceId: micDevId ? { exact: micDevId } : undefined },
       },
     );
@@ -93,7 +93,7 @@ export default function StreamInterface() {
     return window.navigator.mediaDevices.getDisplayMedia(
       {
         cursor: true,
-        video: { width: 3000 },
+        video: { width: 1980 },
         audio: true,
       },
     );
