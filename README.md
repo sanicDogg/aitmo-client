@@ -33,5 +33,9 @@
 
 В файле `src/config/ice-servers.json` установлены адреса STUN и TURN серверов
 
+### Сервер
+Ссылка на репозиторий с сервером:
+
+[https://github.com/sanicDogg/aitmo-server](https://github.com/sanicDogg/aitmo-server)
 
 ![Скриншот приложения](screenshots/1.png)
