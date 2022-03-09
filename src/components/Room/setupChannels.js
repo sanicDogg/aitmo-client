@@ -6,7 +6,7 @@ import iceServers from '../../config/ice-servers.json';
 const socketSetup = () => new Promise((resolve) => {
   // const host = servers.localhost;
   // Передать host аргументом io(), если сервер лежит на другом порту или хосте
-  const socket = io('localhost:5000');
+  const socket = io(':5000');
   socket.on('connected', ({ id }) => {
     if (socket.id === id) {
       console.log('SOCKET CONNECTED!');
