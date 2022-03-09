@@ -5,6 +5,7 @@
   },
   "rules": {
     "no-alert": "off",
+    "linebreak-style": "off",
     "no-console": "off",
     "jsx-a11y/media-has-caption": "off",
     "no-trailing-spaces": "warn",
