@@ -1,5 +1,5 @@
 /*
-* Файл с IP адресами серверов, components/Room/setupChannels.js, использует поле localhost
+* Теперь адрес сервера хранится в переменной окружения AITMO_HOST
  */
 
 export default {
