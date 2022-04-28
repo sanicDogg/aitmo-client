@@ -27,7 +27,7 @@ const getUserName = () => {
 
 export default function Room({ location }) {
   const [name, setName] = useState(getUserName());
-  const [room, setRoom] = useState(location.pathname.slice(1));
+  const [room, setRoom] = useState(location.pathname.slice(3));
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
