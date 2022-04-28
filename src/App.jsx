@@ -12,7 +12,7 @@ function App() {
   return (
     <Router>
       <Route path="/" exact component={CreateRoom} />
-      <Route path="/:roomId" component={Room} />
+      <Route path="/#/:roomId" component={Room} />
     </Router>
   );
 }
