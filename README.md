@@ -41,6 +41,10 @@ AITMO_HOST=https://example.com
 
 В файле `src/config/ice-servers.json` установлены адреса STUN и TURN серверов
 
+Готовый Docker контейнер с TURN сервером можно найти здесь:
+
+[https://devblogs.microsoft.com/cse/2018/01/29/orchestrating-turn-servers-cloud-deployment/](https://devblogs.microsoft.com/cse/2018/01/29/orchestrating-turn-servers-cloud-deployment/)
+
 ### Сервер
 Ссылка на репозиторий с сервером:
 
