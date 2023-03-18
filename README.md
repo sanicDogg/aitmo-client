@@ -3,7 +3,7 @@
 Приложение для удобного проведения вебинаров, совместной работы,
 экзаменации, собеседований. Использует технологию WebRTC. Сделано с использованием библиотеки React.
 
-Демо доступно здесь [rechat.cf](https://rechat.cf)
+Демо доступно здесь [https://aitmo.onrender.com/](https://aitmo.onrender.com/)
 
 - Установить зависимости `npm install`
 - Запустить сначала [сервер](https://github.com/sanicDogg/aitmo-server), затем клиент `npm start`
